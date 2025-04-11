@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import {checkDuplicate}  from './Module/checkDuplicate'
+import {checkDuplicate}  from './components/checkDuplicate'
 
 const App = () => {
   const [applications, setApplications] = useState([])
