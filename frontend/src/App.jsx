@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
+import {checkDuplicate}  from './Module/checkDuplicate'
 
 const App = () => {
   const [applications, setApplications] = useState([])
@@ -14,19 +15,22 @@ const App = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+
+    
     const formData = new FormData(e.target)
     const data = Object.fromEntries(formData.entries())
-
+    
+    if (checkDuplicate(data.company, data.role)) {
+      alert("Application for this company and name already exists.")
+      return
+    }
+    
     const today = new Date().toISOString().split("T")[0]
     if (data.dateOfApplication > today) {
       alert("Date of application cannot be in the future.")
       return
     }
-
-    if (applications.some((app) => (app.company === data.company && app.role === data.role))) {
-      alert("Application for this company and name already exists.")
-      return
-    }
+    
     axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/applications`, 
       {company: data.company, role: data.role, status: data.status, dateOfApplication: data.dateOfApplication, link: data.link})
       .then((response) => {
@@ -64,6 +68,11 @@ const App = () => {
   }
 
   const handleDelete = (index) => {
+    // confirmation before deletion
+    const confirmDelete = window.confirm("Are you sure you want to delete this application?")
+    if (!confirmDelete) return
+    // if confirmed, delete the application
+    // using the index to find the application
     try {
       axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/applications/${applications[index]._id}`) 
         .then(() => {
