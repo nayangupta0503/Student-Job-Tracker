@@ -13,16 +13,16 @@ const App = () => {
 
   const [showFilter, setShowFilter] = useState(false)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault()
 
-    
     const formData = new FormData(e.target)
     const data = Object.fromEntries(formData.entries())
     
-    if (checkDuplicate(data.company, data.role)) {
-      alert("Application for this company and name already exists.")
-      return
+    const isDuplicate = await checkDuplicate(data.company, data.role)
+    if (isDuplicate) {
+    alert("Application for this company and name already exists.")
+    return
     }
     
     const today = new Date().toISOString().split("T")[0]
